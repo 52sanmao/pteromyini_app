@@ -10,6 +10,7 @@ enum PlaybackState { idle, loading, playing, paused, error }
 class MediaService {
   final AudioPlayer _player = AudioPlayer();
   SongModel? _currentSong;
+  bool _transitionedToReady = false;
 
   final currentSongNotifier = ValueNotifier<SongModel?>(null);
   final positionNotifier = ValueNotifier<Duration>(Duration.zero);
@@ -56,22 +57,26 @@ class MediaService {
     _playerStateSub = _player.playerStateStream.listen((state) {
       isPlayingNotifier.value = state.playing;
 
-      if (state.processingState == ProcessingState.idle && state.error != null) {
-        errorMessageNotifier.value = _describeError(state.error);
-        playbackStateNotifier.value = PlaybackState.error;
-        return;
-      }
-
       switch (state.processingState) {
         case ProcessingState.idle:
-          playbackStateNotifier.value = PlaybackState.idle;
+          if (_transitionedToReady) {
+            playbackStateNotifier.value = PlaybackState.idle;
+          } else if (_currentSong != null &&
+              playbackStateNotifier.value == PlaybackState.loading) {
+            playbackStateNotifier.value = PlaybackState.error;
+            errorMessageNotifier.value = '加载失败，请检查链接或网络';
+          } else {
+            playbackStateNotifier.value = PlaybackState.idle;
+          }
+          _transitionedToReady = false;
         case ProcessingState.loading:
         case ProcessingState.buffering:
           playbackStateNotifier.value = PlaybackState.loading;
         case ProcessingState.ready:
+          _transitionedToReady = true;
           playbackStateNotifier.value =
               state.playing ? PlaybackState.playing : PlaybackState.paused;
-          if (state.error == null) errorMessageNotifier.value = null;
+          errorMessageNotifier.value = null;
         case ProcessingState.completed:
           playbackStateNotifier.value = PlaybackState.idle;
           isPlayingNotifier.value = false;
@@ -101,6 +106,7 @@ class MediaService {
     _currentSong = song;
     currentSongNotifier.value = song;
     errorMessageNotifier.value = null;
+    _transitionedToReady = false;
     playbackStateNotifier.value = PlaybackState.loading;
 
     try {
@@ -117,6 +123,7 @@ class MediaService {
       }
       await _player.play();
     } catch (e) {
+      _transitionedToReady = false;
       playbackStateNotifier.value = PlaybackState.error;
       errorMessageNotifier.value = _describeError(e);
     }
@@ -124,11 +131,13 @@ class MediaService {
 
   Future<void> playUrl(String url) async {
     errorMessageNotifier.value = null;
+    _transitionedToReady = false;
     playbackStateNotifier.value = PlaybackState.loading;
     try {
       await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
       await _player.play();
     } catch (e) {
+      _transitionedToReady = false;
       playbackStateNotifier.value = PlaybackState.error;
       errorMessageNotifier.value = _describeError(e);
     }
@@ -174,6 +183,7 @@ class MediaService {
     isPlayingNotifier.value = false;
     playbackStateNotifier.value = PlaybackState.idle;
     errorMessageNotifier.value = null;
+    _transitionedToReady = false;
   }
 
   void dispose() {
