@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/music_provider.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/now_playing_bar.dart';
+import '../pages/player_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +19,14 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MusicProvider>().initialize();
     });
+  }
+
+  void _playAndNavigate(int index) {
+    final provider = context.read<MusicProvider>();
+    provider.playSongAt(index);
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const PlayerPage()),
+    );
   }
 
   void _showAddUrlDialog() {
@@ -109,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                               return SongTile(
                                 song: song,
                                 isPlaying: provider.mediaService.currentSong?.id == song.id,
-                                onTap: () => provider.playSongAt(i),
+                                onTap: () => _playAndNavigate(i),
                               );
                             },
                             childCount: provider.songs.length,
