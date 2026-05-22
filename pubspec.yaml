@@ -54,6 +54,4 @@ flutter:
     - assets/js/record.fixwebmduration.js
     - assets/js/record.worklet.js
 
-  shaders:
-    - assets/shaders/ink_sparkle.frag
-    - assets/shaders/stretch_effect.frag
+
