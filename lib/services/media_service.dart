@@ -41,12 +41,8 @@ class MediaService {
     _currentSong = song;
     currentSongNotifier.value = song;
     try {
-      if (song.isLocal && song.filePath.isNotEmpty) {
-        if (File(song.filePath).existsSync()) {
-          await _player.setFilePath(song.filePath);
-        } else if (song.url != null) {
-          await _player.setUrl(song.url!);
-        }
+      if (song.isLocal && song.filePath != null && File(song.filePath!).existsSync()) {
+        await _player.setFilePath(song.filePath!);
       } else if (song.url != null) {
         await _player.setUrl(song.url!);
       }

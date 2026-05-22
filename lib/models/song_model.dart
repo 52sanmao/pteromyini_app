@@ -4,7 +4,7 @@ class SongModel {
   final String artist;
   final String album;
   final String? albumArt;
-  final String filePath;
+  final String? filePath;
   final String? url;
   final Duration duration;
   final bool isLocal;
@@ -16,7 +16,7 @@ class SongModel {
     required this.artist,
     this.album = '',
     this.albumArt,
-    required this.filePath,
+    this.filePath,
     this.url,
     this.duration = Duration.zero,
     this.isLocal = true,
