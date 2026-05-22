@@ -1,0 +1,59 @@
+name: pteromyini_app
+description: 鼯鼠滑翔计算器 - Music & Media Player
+publish_to: 'none'
+version: 1.0.2+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Audio/Video
+  just_audio: ^0.9.39
+
+  # Recording
+  record: ^5.1.2
+
+  # Storage
+  sqflite: ^2.3.3
+  shared_preferences: ^2.3.2
+
+  # Network
+  connectivity_plus: ^6.0.3
+
+  # Permission
+  permission_handler: ^11.3.1
+
+  # Image
+  image_picker: ^1.1.2
+  cached_network_image: ^3.4.1
+
+  # Utils
+  path: ^1.9.0
+  url_launcher: ^6.3.0
+  path_provider: ^2.1.3
+  intl: ^0.20.2
+  provider: ^6.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/channelId.txt
+    - assets/lottie/dialog_file.json
+    - assets/js/hls1.4.10.js
+    - assets/js/record.fixwebmduration.js
+    - assets/js/record.worklet.js
+
+  shaders:
+    - assets/shaders/ink_sparkle.frag
+    - assets/shaders/stretch_effect.frag

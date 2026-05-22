@@ -1,0 +1,24 @@
+# Flutter
+build/
+.dart_tool/
+.packages
+.pub/
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner.xcworkspace/
+ios/Podfile.lock
+
+# Secrets
+*.jks
+*.keystore
+key.properties

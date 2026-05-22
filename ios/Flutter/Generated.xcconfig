@@ -1,0 +1,4 @@
+FLUTTER_ROOT=D:\install\flutter
+FLUTTER_APPLICATION_PATH=H:\opencode\pteromyini_app
+COCOAPODS_PARALLEL_CODE_SIGN=true
+FLUTTER_TARGET=lib/main.dart
