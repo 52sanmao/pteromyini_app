@@ -55,6 +55,13 @@ class MediaService {
 
     _playerStateSub = _player.playerStateStream.listen((state) {
       isPlayingNotifier.value = state.playing;
+
+      if (state.processingState == ProcessingState.idle && state.error != null) {
+        errorMessageNotifier.value = _describeError(state.error);
+        playbackStateNotifier.value = PlaybackState.error;
+        return;
+      }
+
       switch (state.processingState) {
         case ProcessingState.idle:
           playbackStateNotifier.value = PlaybackState.idle;
@@ -64,7 +71,7 @@ class MediaService {
         case ProcessingState.ready:
           playbackStateNotifier.value =
               state.playing ? PlaybackState.playing : PlaybackState.paused;
-          errorMessageNotifier.value = null;
+          if (state.error == null) errorMessageNotifier.value = null;
         case ProcessingState.completed:
           playbackStateNotifier.value = PlaybackState.idle;
           isPlayingNotifier.value = false;
@@ -74,14 +81,6 @@ class MediaService {
     _durationSub = _player.durationStream.listen((dur) {
       if (dur != null && dur > Duration.zero) {
         durationNotifier.value = dur;
-      }
-    });
-
-    _player.playbackEventStream.listen((event) {
-      final err = event.dataSourceException;
-      if (err != null) {
-        errorMessageNotifier.value = _describeError(err);
-        playbackStateNotifier.value = PlaybackState.error;
       }
     });
   }
